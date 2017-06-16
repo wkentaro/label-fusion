@@ -56,14 +56,14 @@ int main(int argc, char* argv[])
     origin_ = cam_pose * origin_;
     Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
 
-    pcl::PointXYZRGB ptt;
-    ptt.x = origin(0);
-    ptt.y = origin(1);
-    ptt.z = origin(2);
-    ptt.r = 255;
-    ptt.g = 0;
-    ptt.b = 0;
-    cloud.push_back(ptt);
+    pcl::PointXYZRGB pt;
+    pt.x = origin(0);
+    pt.y = origin(1);
+    pt.z = origin(2);
+    pt.r = 255;
+    pt.g = 0;
+    pt.b = 0;
+    cloud.push_back(pt);
 
     octomap::KeySet occupied_cells;
     for (int v = 0; v < mask.rows; v+=10)
@@ -72,11 +72,12 @@ int main(int argc, char* argv[])
       {
         // printf("u: %d, v: %d\n", u, v);
 
-        float x = (u - cam_K(6)) / cam_K(0);
-        float y = (v - cam_K(7)) / cam_K(4);
-        Eigen::Vector4f direction_(x, y, 1, 1);
+        Eigen::Vector3f uv(u, v, 1);
+        uv = cam_K.inverse() * uv;
+        Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);
         direction_ = cam_pose * direction_;
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
+
         pcl::PointXYZRGB pt;
         pt.x = direction(0);
         pt.y = direction(1);
@@ -116,14 +117,14 @@ int main(int argc, char* argv[])
     double x = (*it).x();
     double y = (*it).y();
     double z = (*it).z();
-    pcl::PointXYZRGB point_;
-    point_.x = x;
-    point_.y = y;
-    point_.z = z;
-    point_.r = 0;
-    point_.g = 255;
-    point_.b = 0;
-    cloud.push_back(point_);
+    pcl::PointXYZRGB pt;
+    pt.x = x;
+    pt.y = y;
+    pt.z = z;
+    pt.r = 0;
+    pt.g = 255;
+    pt.b = 0;
+    cloud.push_back(pt);
   }
   std::string out_file("out_mask_fusion.ply");
   pcl::io::savePLYFile(out_file, cloud);
