@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
     origin_ = cam_pose * origin_;
     Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
 
+    // visualize camera origin
     pcl::PointXYZRGB pt;
     pt.x = origin(0);
     pt.y = origin(1);
@@ -78,6 +79,7 @@ int main(int argc, char* argv[])
         direction_ = cam_pose * direction_;
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
 
+        // visualize ray direction
         pcl::PointXYZRGB pt;
         pt.x = direction(0);
         pt.y = direction(1);
@@ -110,6 +112,7 @@ int main(int argc, char* argv[])
     }
   }
 
+  // visualize 3d segmentation
   octomap::point3d_list node_centers;
   octree.getCentersMinHits(node_centers, static_cast<int>(0.95 * n_views));
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
