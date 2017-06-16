@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include <octomap/OcTree.h>
+#include <octomap/CountingOcTree.h>
 #include <opencv2/opencv.hpp>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
@@ -31,7 +31,6 @@ Eigen::MatrixXf loadMatrixFromFile(std::string filename, int M, int N) {
 
 } // namespace utils
 
-
 int main(int argc, char* argv[])
 {
   if (argc != 2)
@@ -41,7 +40,9 @@ int main(int argc, char* argv[])
   }
   std::string data_path(argv[1]);
 
-  octomap::OcTree octree(/*resolution=*/0.01);
+  int n_views = 15;
+
+  octomap::CountingOcTree octree(/*resolution=*/0.01);
 
   // cam_info: intrinsic parameter of color camera
   std::string cam_K_file = data_path + "/camera-intrinsics.txt";
@@ -51,9 +52,8 @@ int main(int argc, char* argv[])
   std::cout << std::endl;
 
   pcl::PointCloud<pcl::PointXYZRGB> cloud;
-  for (int frame_idx = 0; frame_idx < 4; frame_idx++)
+  for (int frame_idx = 0; frame_idx < n_views; frame_idx++)
   {
-    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
     std::ostringstream curr_frame_prefix;
     curr_frame_prefix << std::setw(6) << std::setfill('0') << frame_idx;
     std::cout << "frame-" + curr_frame_prefix.str() << std::endl;
@@ -118,33 +118,32 @@ int main(int argc, char* argv[])
           octomap::KeyRay key_ray;
           octree.computeRayKeys(pt_origin, pt_direction, key_ray);
           occupied_cells.insert(key_ray.begin(), key_ray.end());
-          for (octomap::KeySet::iterator it = occupied_cells.begin(), end = occupied_cells.end(); it != end; ++it)
-          {
-            octree.updateNode(*it, true);
-          }
         }
       }
     }
-    printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
-  }
-
-  for (octomap::OcTree::iterator it = octree.begin(), end = octree.end(); it != end; ++ it)
-  {
-    if (octree.isNodeOccupied(*it))
+    for (octomap::KeySet::iterator it = occupied_cells.begin(), end = occupied_cells.end(); it != end; ++it)
     {
-      double z = it.getZ();
-      double size = it.getSize();
-      double x = it.getX();
-      double y = it.getY();
-      pcl::PointXYZRGB point_;
-      point_.x = x;
-      point_.y = y;
-      point_.z = z;
-      point_.r = 0;
-      point_.g = 255;
-      point_.b = 0;
-      cloud.push_back(point_);
+      octree.updateNode(*it);
     }
   }
-  pcl::io::savePLYFile("out.ply", cloud);
+
+  octomap::point3d_list node_centers;
+  octree.getCentersMinHits(node_centers, static_cast<int>(0.95 * n_views));
+  for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
+  {
+    double x = (*it).x();
+    double y = (*it).y();
+    double z = (*it).z();
+    pcl::PointXYZRGB point_;
+    point_.x = x;
+    point_.y = y;
+    point_.z = z;
+    point_.r = 0;
+    point_.g = 255;
+    point_.b = 0;
+    cloud.push_back(point_);
+  }
+  std::string out_file("out_mask_fusion.ply");
+  pcl::io::savePLYFile(out_file, cloud);
+  std::cout << "Wrote mask fusion result to: " << out_file << std::endl;
 }
