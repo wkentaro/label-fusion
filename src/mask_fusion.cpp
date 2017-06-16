@@ -6,7 +6,6 @@
 
 #include <octomap/CountingOcTree.h>
 #include <opencv2/opencv.hpp>
-#include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
