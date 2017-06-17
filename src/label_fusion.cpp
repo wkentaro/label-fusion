@@ -102,13 +102,11 @@ int main(int argc, char* argv[])
           continue;
         }
 
-        // cv::Mat ray_viz = cv::Mat::zeros(segm.rows, segm.cols, CV_8UC3);
-        // cv::cvtColor(segm, ray_viz, cv::COLOR_GRAY2BGR);
-        cv::Mat ray_viz;
-        segm_viz.copyTo(ray_viz);
-        cv::circle(ray_viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
-        cv::imshow("ray_viz", ray_viz);
-        cv::waitKey(1);
+        // cv::Mat ray_viz;
+        // segm_viz.copyTo(ray_viz);
+        // cv::circle(ray_viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
+        // cv::imshow("ray_viz", ray_viz);
+        // cv::waitKey(1);
 
         // ray direction
         octomap::point3d pt_origin(origin(0), origin(1), origin(2));
