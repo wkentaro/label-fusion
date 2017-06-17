@@ -17,7 +17,7 @@ C++ code to fuse multiple object mask images into OctoMap, which can be then use
 
 ```bash
 ./build.sh
-./demo label_fusion
+./demo.py label_fusion
 ```
 
 
@@ -28,5 +28,5 @@ We also support fusing multiple masks:
 <img src="static/mask_fusion.png" width="80%" />
 
 ```bash
-./demo mask_fusion
+./demo.py mask_fusion
 ```
