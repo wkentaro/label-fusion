@@ -1,4 +1,4 @@
 [submodule "octomap"]
 	path = octomap
 	url = https://github.com/wkentaro/octomap.git
-	branch = counting_octree_segv
+	branch = label_fusion
