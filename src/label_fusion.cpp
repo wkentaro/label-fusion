@@ -79,50 +79,72 @@ main(int argc, const char** argv)
     cloud.push_back(pt);
 
     std::map<unsigned int, octomap::KeySet> occupied_cells;
-    //octomap::KeySet occupied_cells;
+    octomap::KeySet unoccupied_cells;
     for (int v = 0; v < segm.rows; v+=10)
     {
       for (int u = 0; u < segm.cols; u+=10)
       {
+        float d = std::numeric_limits<float>::quiet_NaN();
+        if (use_depth)
+        {
+          d = depth.at<float>(v, u);
+        }
+
         Eigen::Vector3f uv(u, v, 1);
         uv = cam_K.inverse() * uv;
         Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);
+        if (!std::isnan(d))
+        {
+          direction_(2) = d;
+        }
         direction_ = cam_pose * direction_;
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
 
-        // visualize ray direction
-        pcl::PointXYZRGB pt(0, 0, 255);
-        pt.x = direction(0);
-        pt.y = direction(1);
-        pt.z = direction(2);
-        cloud.push_back(pt);
-
-        unsigned int label_id = static_cast<unsigned int>(segm.at<unsigned char>(v, u));
-        if (label_id == 0)
-        {
-          continue;
-        }
-
-        // cv::Mat ray_viz;
-        // segm_viz.copyTo(ray_viz);
-        // cv::circle(ray_viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
-        // cv::imshow("ray_viz", ray_viz);
-        // cv::waitKey(1);
-
-        // ray direction
         octomap::point3d pt_origin(origin(0), origin(1), origin(2));
         octomap::point3d pt_direction(direction(0), direction(1), direction(2));
-        octomap::KeyRay key_ray;
-        octree.computeRayKeys(pt_origin, pt_direction, key_ray);
-        occupied_cells[label_id].insert(key_ray.begin(), key_ray.end());
+        unsigned int label_id = static_cast<unsigned int>(segm.at<unsigned char>(v, u));
+        if (std::isnan(d))
+        {
+          // visualize ray direction
+          pcl::PointXYZRGB pt(0, 0, 255);
+          pt.x = direction(0);
+          pt.y = direction(1);
+          pt.z = direction(2);
+          cloud.push_back(pt);
+
+          // cv::Mat ray_viz;
+          // segm_viz.copyTo(ray_viz);
+          // cv::circle(ray_viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
+          // cv::imshow("ray_viz", ray_viz);
+          // cv::waitKey(1);
+
+          if (label_id != 0)
+          {
+            octomap::KeyRay key_ray;
+            octree.computeRayKeys(pt_origin, pt_direction, key_ray);
+            occupied_cells[label_id].insert(key_ray.begin(), key_ray.end());
+          }
+        }
+        else
+        {
+          // TODO(wkentaro): raycasting
+        }
       }
+    }
+    for (octomap::KeySet::iterator it = unoccupied_cells.begin(), end = unoccupied_cells.end();
+         it != end; ++it)
+    {
+      octree.updateNode(*it, /*label=*/-1, /*hit=*/false, /*reset=*/true);
     }
     for (unsigned int label_id = 1; label_id < 40; label_id++)
     {
       for (octomap::KeySet::iterator it = occupied_cells[label_id].begin(), end = occupied_cells[label_id].end();
            it != end; ++it)
       {
-        octree.updateNode(*it, /*label=*/label_id);
+        if (unoccupied_cells.find(*it) == unoccupied_cells.end())
+        {
+          octree.updateNode(*it, /*label=*/label_id);
+        }
       }
     }
   }
