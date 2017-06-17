@@ -55,8 +55,6 @@ int main(int argc, char* argv[])
         }
       }
     }
-    cv::imwrite("frame-" + curr_frame_prefix.str() + ".segm.viz.jpg", segm_viz);
-
     // cv::imshow("segm_viz", segm_viz);
     // cv::waitKey(0);
 

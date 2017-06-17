@@ -14,7 +14,7 @@ cd ../..
 
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH
+cmake ..
 make -j
 
 set +x
