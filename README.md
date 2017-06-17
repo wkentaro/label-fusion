@@ -9,7 +9,7 @@ C++ code to fuse multiple object mask images into OctoMap, which can be then use
 
 - [OpenCV](http://opencv.org) (tested with OpenCV 2.4.8)
 - [Eigen](http://eigen.tuxfamily.org)
-- [octomap](http://github.com/octomap/octomap)
+- [octomap (wkentaro/octomap@label_fusion)](https://github.com/wkentaro/octomap/tree/label_fusion)
 - [PCL](http://pointclouds.org) (tested with PCL 1.7.1)
 
 
