@@ -10,18 +10,18 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "argparse.hpp"
 #include "utils.hpp"
 
-int main(int argc, const char** argv)
+int
+main(int argc, const char** argv)
 {
-  argparse::ArgumentParser parser;
-  parser.addArgument("-d", "--depth", /*nargs=*/0);
-  parser.addFinalArgument("data_path");
-  parser.parse(argc, argv);
-
-  bool use_depth = parser.exists("depth");
-  std::string data_path = parser.retrieve<std::string>("data_path");
+  if (argc != 2)
+  {
+    printf("Usage: %s DATA_PATH\n", argv[0]);
+    return 1;
+  }
+  bool use_depth = false;
+  std::string data_path(argv[1]);
 
   int n_views = 15;
 
