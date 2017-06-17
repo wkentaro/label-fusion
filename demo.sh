@@ -2,7 +2,7 @@
 
 set -x
 
-./build/mask_fusion ./data
+./build/mask_fusion ./data/masks
 
 if which meshlab &>/dev/null; then
   meshlab out_mask_fusion.ply
