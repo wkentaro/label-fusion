@@ -71,13 +71,10 @@ int main(int argc, char* argv[])
     Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
 
     // visualize camera origin
-    pcl::PointXYZRGB pt;
+    pcl::PointXYZRGB pt(255, 0, 0);
     pt.x = origin(0);
     pt.y = origin(1);
     pt.z = origin(2);
-    pt.r = 255;
-    pt.g = 0;
-    pt.b = 0;
     cloud.push_back(pt);
 
     std::map<unsigned int, octomap::KeySet> occupied_cells;
@@ -93,13 +90,10 @@ int main(int argc, char* argv[])
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
 
         // visualize ray direction
-        pcl::PointXYZRGB pt;
+        pcl::PointXYZRGB pt(0, 0, 255);
         pt.x = direction(0);
         pt.y = direction(1);
         pt.z = direction(2);
-        pt.r = 0;
-        pt.g = 0;
-        pt.b = 255;
         cloud.push_back(pt);
 
         unsigned int label_id = static_cast<unsigned int>(segm.at<unsigned char>(v, u));
@@ -141,18 +135,12 @@ int main(int argc, char* argv[])
   unsigned int index = 0;
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
-    double x = (*it).x();
-    double y = (*it).y();
-    double z = (*it).z();
-    pcl::PointXYZRGB pt;
-    pt.x = x;
-    pt.y = y;
-    pt.z = z;
     unsigned int label_id = node_labels[index];
     cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/40);
-    pt.r = color[0] * 255;
-    pt.g = color[1] * 255;
-    pt.b = color[2] * 255;
+    pcl::PointXYZRGB pt(color[0] * 255, color[1] * 255, color[2] * 255);
+    pt.x = (*it).x();
+    pt.y = (*it).y();
+    pt.z = (*it).z();
     cloud.push_back(pt);
     index += 1;
   }

@@ -70,13 +70,10 @@ int main(int argc, const char** argv)
     Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
 
     // visualize camera origin
-    pcl::PointXYZRGB pt;
+    pcl::PointXYZRGB pt(255, 0, 0);
     pt.x = origin(0);
     pt.y = origin(1);
     pt.z = origin(2);
-    pt.r = 255;
-    pt.g = 0;
-    pt.b = 0;
     cloud.push_back(pt);
 
     octomap::KeySet occupied_cells;
@@ -104,13 +101,10 @@ int main(int argc, const char** argv)
         if (std::isnan(d))
         {
           // visualize ray direction
-          pcl::PointXYZRGB pt;
+          pcl::PointXYZRGB pt(0, 0, 255);
           pt.x = direction(0);
           pt.y = direction(1);
           pt.z = direction(2);
-          pt.r = 0;
-          pt.g = 0;
-          pt.b = 255;
           cloud.push_back(pt);
         }
 
@@ -158,16 +152,10 @@ int main(int argc, const char** argv)
   octree.getCentersMinHits(node_centers, static_cast<int>(0.95 * n_views));
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
-    double x = (*it).x();
-    double y = (*it).y();
-    double z = (*it).z();
-    pcl::PointXYZRGB pt;
-    pt.x = x;
-    pt.y = y;
-    pt.z = z;
-    pt.r = 0;
-    pt.g = 255;
-    pt.b = 0;
+    pcl::PointXYZRGB pt(0, 255, 0);
+    pt.x = (*it).x();
+    pt.y = (*it).y();
+    pt.z = (*it).z();
     cloud.push_back(pt);
   }
   std::string out_file("out_mask_fusion.ply");
