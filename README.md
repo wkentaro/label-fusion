@@ -1,5 +1,7 @@
 # mask-fusion: Volumetric Fusion of Multiple Object Masks
 
+![](teaser.png)
+
 C++ code to fuse multiple object mask images into OctoMap, which can be then used for 3d reconstruction of objects.
 
 
