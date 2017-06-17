@@ -1,3 +1,4 @@
 /build/
 /devel/
 out_mask_fusion.ply
+out_label_fusion.ply

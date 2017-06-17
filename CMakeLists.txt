@@ -16,3 +16,6 @@ include_directories(include)
 
 add_executable(mask_fusion src/mask_fusion.cpp)
 target_link_libraries(mask_fusion ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(label_fusion src/label_fusion.cpp)
+target_link_libraries(label_fusion ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
