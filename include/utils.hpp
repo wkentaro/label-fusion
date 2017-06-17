@@ -114,4 +114,22 @@ cv::Mat colorizeDepth(cv::Mat depth)
     return depth_viz;
 }
 
+cv::Mat colorizeLabel(cv::Mat label, unsigned int n_label)
+{
+  cv::Mat label_viz = cv::Mat::zeros(label.rows, label.cols, CV_8UC3);
+  for (size_t j = 0; j < label.rows; j++)
+  {
+    for (size_t i = 0; i < label.cols; i++)
+    {
+      unsigned int label_id = static_cast<unsigned int>(label.at<unsigned char>(j, i));
+      assert(0 <= label_id < 40);
+      if (label_id != 0) {
+        cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/n_label);
+        label_viz.at<cv::Vec3b>(j, i) = cv::Vec3b(color[2] * 255, color[1] * 255, color[0] * 255);
+      }
+    }
+  }
+  return label_viz;
+}
+
 }  // namespace utils

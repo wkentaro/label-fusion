@@ -42,23 +42,22 @@ int main(int argc, const char** argv)
     std::cout << "frame-" + curr_frame_prefix.str() << std::endl;
     std::cout << std::endl;
 
+    // segmentation file
     std::string segm_file = data_path + "/frame-" + curr_frame_prefix.str() + ".segm.png";
     cv::Mat segm = utils::loadSegmFile(segm_file);
-    cv::Mat segm_viz = cv::Mat::zeros(segm.rows, segm.cols, CV_8UC3);
-    for (size_t j = 0; j < segm.rows; j++)
-    {
-      for (size_t i = 0; i < segm.cols; i++)
-      {
-        unsigned int label_id = static_cast<unsigned int>(segm.at<unsigned char>(j, i));
-        assert(0 <= label_id < 40);
-        if (label_id != 0) {
-          cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/40);
-          segm_viz.at<cv::Vec3b>(j, i) = cv::Vec3b(color[2] * 255, color[1] * 255, color[0] * 255);
-        }
-      }
-    }
+    // cv::Mat segm_viz = utils::colorizeLabel(segm, #<{(|n_label=|)}>#40);
     // cv::imshow("segm_viz", segm_viz);
     // cv::waitKey(0);
+
+    cv::Mat depth;
+    if (use_depth)
+    {
+      std::string depth_file = data_path + "/frame-" + curr_frame_prefix.str() + ".depth.png";
+      depth = utils::loadDepthFile(depth_file);
+      // cv::Mat depth_viz = utils::colorizeDepth(depth);
+      // cv::imshow("depth_viz", depth_viz);
+      // cv::waitKey(0);
+    }
 
     // pose: world -> camera
     std::string pose_file = data_path + "/frame-" + curr_frame_prefix.str() + ".pose.txt";

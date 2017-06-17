@@ -43,6 +43,7 @@ int main(int argc, const char** argv)
     std::cout << "frame-" + curr_frame_prefix.str() << std::endl;
     std::cout << std::endl;
 
+    // mask file
     std::string mask_file = data_path + "/frame-" + curr_frame_prefix.str() + ".mask.png";
     cv::Mat mask = cv::imread(mask_file, 0);
 
@@ -51,7 +52,6 @@ int main(int argc, const char** argv)
     {
       std::string depth_file = data_path + "/frame-" + curr_frame_prefix.str() + ".depth.png";
       depth = utils::loadDepthFile(depth_file);
-
       // cv::Mat depth_viz = utils::colorizeDepth(depth);
       // cv::imshow("depth_viz", depth_viz);
       // cv::waitKey(0);
