@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 
     std::string segm_file = data_path + "/frame-" + curr_frame_prefix.str() + ".segm.png";
-    cv::Mat segm = utils::loadSegmFile(segm_file, 480, 640);
+    cv::Mat segm = utils::loadSegmFile(segm_file);
     cv::Mat segm_viz = cv::Mat::zeros(segm.rows, segm.cols, CV_8UC3);
     for (size_t j = 0; j < segm.rows; j++)
     {

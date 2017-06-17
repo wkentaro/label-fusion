@@ -46,7 +46,7 @@ cv::Scalar get_label_color(unsigned int label_id, unsigned int n_label)
   return cv::Scalar(red, green, blue);
 }
 
-cv::Mat loadSegmFile(std::string filename, int H, int W)
+cv::Mat loadSegmFile(std::string filename)
 {
   cv::Mat segm = cv::imread(filename, 0);
   if (segm.empty())
@@ -56,9 +56,9 @@ cv::Mat loadSegmFile(std::string filename, int H, int W)
   }
   // cv::imshow("segm", segm);
   // cv::waitKey(0);
-  for (int j = 0; j < H; ++j)
+  for (int j = 0; j < segm.rows; ++j)
   {
-    for (int i = 0; i < W; ++i) {
+    for (int i = 0; i < segm.cols; ++i) {
       segm.at<unsigned char>(j, i) = segm.at<unsigned char>(j, i) / 6;
     }
   }
