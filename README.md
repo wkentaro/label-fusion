@@ -30,3 +30,8 @@ We also support fusing multiple masks:
 ```bash
 ./demo.py mask_fusion
 ```
+
+
+## License
+
+MIT License (see `LICENSE` file).
