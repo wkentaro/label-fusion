@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <opencv2/opencv.hpp>
@@ -61,6 +63,55 @@ cv::Mat loadSegmFile(std::string filename, int H, int W)
     }
   }
   return segm;
+}
+
+cv::Mat loadDepthFile(std::string filename)
+{
+  cv::Mat depth_raw = cv::imread(filename, CV_LOAD_IMAGE_UNCHANGED);
+  if (depth_raw.empty())
+  {
+    std::cout << "Error: depth image file not read!" << std::endl;
+    cv::waitKey(0);
+  }
+  cv::Mat depth(depth_raw.rows, depth_raw.cols, CV_32FC1);
+  for (size_t j = 0; j < depth_raw.rows; ++j)
+  {
+    for (size_t i = 0; i < depth_raw.cols; ++i)
+    {
+      float tmp;
+      tmp = static_cast<float>(depth_raw.at<unsigned short>(j, i) >> 3) / 1e4;
+      if (tmp == 0)
+      {
+        depth.at<float>(j, i) = std::numeric_limits<float>::quiet_NaN();
+      }
+      else
+      {
+        depth.at<float>(j, i) = tmp;
+      }
+    }
+  }
+  return depth;
+}
+
+cv::Mat colorizeDepth(cv::Mat depth)
+{
+    double min_value, max_value;
+    cv::minMaxLoc(depth, &min_value, &max_value);
+    cv::Mat depth_viz(depth.rows, depth.cols, CV_8UC3);
+    cv::Mat(depth - min_value).convertTo(
+      depth_viz, CV_8UC3, 255.0 / (max_value - min_value));
+    cv::applyColorMap(depth_viz, depth_viz, 2); // JET
+    for (size_t j = 0; j < depth_viz.rows; ++j)
+    {
+      for (size_t i = 0; i < depth_viz.cols; ++i)
+      {
+        if (std::isnan(depth.at<float>(j, i)))
+        {
+          depth_viz.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 0, 0);
+        }
+      }
+    }
+    return depth_viz;
 }
 
 }  // namespace utils

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -10,16 +11,18 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include "argparse.hpp"
 #include "utils.hpp"
 
-int main(int argc, char* argv[])
+int main(int argc, const char** argv)
 {
-  if (argc != 2)
-  {
-    printf("Usage: %s DATA_DIR\n", argv[0]);
-    return 1;
-  }
-  std::string data_path(argv[1]);
+  argparse::ArgumentParser parser;
+  parser.addArgument("-d", "--depth", /*nargs=*/0);
+  parser.addFinalArgument("data_path");
+  parser.parse(argc, argv);
+
+  bool use_depth = parser.exists("depth");
+  std::string data_path = parser.retrieve<std::string>("data_path");
 
   int n_views = 15;
 
@@ -42,6 +45,17 @@ int main(int argc, char* argv[])
 
     std::string mask_file = data_path + "/frame-" + curr_frame_prefix.str() + ".mask.png";
     cv::Mat mask = cv::imread(mask_file, 0);
+
+    cv::Mat depth;
+    if (use_depth)
+    {
+      std::string depth_file = data_path + "/frame-" + curr_frame_prefix.str() + ".depth.png";
+      depth = utils::loadDepthFile(depth_file);
+
+      // cv::Mat depth_viz = utils::colorizeDepth(depth);
+      // cv::imshow("depth_viz", depth_viz);
+      // cv::waitKey(0);
+    }
 
     // pose: world -> camera
     std::string pose_file = data_path + "/frame-" + curr_frame_prefix.str() + ".pose.txt";
@@ -66,48 +80,76 @@ int main(int argc, char* argv[])
     cloud.push_back(pt);
 
     octomap::KeySet occupied_cells;
+    octomap::KeySet unoccupied_cells;
     for (int v = 0; v < mask.rows; v+=10)
     {
       for (int u = 0; u < mask.cols; u+=10)
       {
-        // printf("u: %d, v: %d\n", u, v);
+        float d = std::numeric_limits<float>::quiet_NaN();
+        if (use_depth)
+        {
+          d = depth.at<float>(v, u);
+        }
 
         Eigen::Vector3f uv(u, v, 1);
         uv = cam_K.inverse() * uv;
         Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);
+        if (!std::isnan(d))
+        {
+          direction_(2) = d;
+        }
         direction_ = cam_pose * direction_;
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
 
-        // visualize ray direction
-        pcl::PointXYZRGB pt;
-        pt.x = direction(0);
-        pt.y = direction(1);
-        pt.z = direction(2);
-        pt.r = 0;
-        pt.g = 0;
-        pt.b = 255;
-        cloud.push_back(pt);
-
-        if (mask.at<unsigned char>(v, u) > 127)
+        if (std::isnan(d))
         {
-          cv::Mat viz = cv::Mat::zeros(mask.rows, mask.cols, CV_8UC3);
-          cv::cvtColor(mask, viz, cv::COLOR_GRAY2BGR);
-          cv::circle(viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
-          cv::imshow("viz", viz);
-          cv::waitKey(1);
+          // visualize ray direction
+          pcl::PointXYZRGB pt;
+          pt.x = direction(0);
+          pt.y = direction(1);
+          pt.z = direction(2);
+          pt.r = 0;
+          pt.g = 0;
+          pt.b = 255;
+          cloud.push_back(pt);
+        }
 
-          // ray direction
-          octomap::point3d pt_origin(origin(0), origin(1), origin(2));
-          octomap::point3d pt_direction(direction(0), direction(1), direction(2));
+        octomap::point3d pt_origin(origin(0), origin(1), origin(2));
+        octomap::point3d pt_direction(direction(0), direction(1), direction(2));
+        if (std::isnan(d))
+        {
+          if (mask.at<unsigned char>(v, u) > 127)
+          {
+            octomap::KeyRay key_ray;
+            octree.computeRayKeys(pt_origin, pt_direction, key_ray);
+            occupied_cells.insert(key_ray.begin(), key_ray.end());
+          }
+        }
+        else
+        {
           octomap::KeyRay key_ray;
-          octree.computeRayKeys(pt_origin, pt_direction, key_ray);
-          occupied_cells.insert(key_ray.begin(), key_ray.end());
+          if (octree.computeRayKeys(pt_origin, pt_direction, key_ray))
+          {
+            unoccupied_cells.insert(key_ray.begin(), key_ray.end());
+          }
+          octomap::OcTreeKey key;
+          if (octree.coordToKeyChecked(pt_direction, key))
+          {
+            occupied_cells.insert(key);
+          }
         }
       }
     }
+    for (octomap::KeySet::iterator it = unoccupied_cells.begin(), end = unoccupied_cells.end(); it != end; ++it)
+    {
+      octree.updateNode(*it, /*hit=*/false, /*reset=*/true);
+    }
     for (octomap::KeySet::iterator it = occupied_cells.begin(), end = occupied_cells.end(); it != end; ++it)
     {
-      octree.updateNode(*it);
+      if (unoccupied_cells.find(*it) == unoccupied_cells.end())
+      {
+        octree.updateNode(*it, /*hit=*/true);
+      }
     }
   }
 
