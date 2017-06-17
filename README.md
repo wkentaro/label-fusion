@@ -1,6 +1,6 @@
-# mask-fusion: Volumetric Fusion of Multiple Object Masks
+# label-fusion: Volumetric Fusion of Multiple Semantic Labels
 
-<img src="teaser.png" width="80%" />
+<img src="static/label_fusion.png" width="80%" />
 
 C++ code to fuse multiple object mask images into OctoMap, which can be then used for 3d reconstruction of objects.
 
@@ -17,5 +17,16 @@ C++ code to fuse multiple object mask images into OctoMap, which can be then use
 
 ```bash
 ./build.sh
-./demo.sh
+./demo label_fusion
+```
+
+
+## mask-fusion
+
+We also support fusing multiple masks:
+
+<img src="static/mask_fusion.png" width="80%" />
+
+```bash
+./demo mask_fusion
 ```
