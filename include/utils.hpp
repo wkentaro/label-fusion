@@ -81,7 +81,7 @@ loadDepthFile(std::string filename)
     for (size_t i = 0; i < depth_raw.cols; ++i)
     {
       float tmp = static_cast<float>(depth_raw.at<unsigned short>(j, i) >> 3) / 1e4;
-      if (tmp == 0)
+      if (tmp < 0.3)  // nan for too small depth
       {
         depth.at<float>(j, i) = std::numeric_limits<float>::quiet_NaN();
       }
