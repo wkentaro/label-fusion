@@ -26,13 +26,13 @@ main(int argc, const char** argv)
 
   int n_views = 15;
   double resolution = 0.01;
-  double threshold = 0.95;
+  double threshold = 0.9;
   unsigned int ksize = 10;
 
   octomap::CountingOcTree octree(/*resolution=*/resolution);
 
   // cam_info: intrinsic parameter of color camera
-  std::string cam_K_file = data_path + "/camera-intrinsics.txt";
+  std::string cam_K_file = data_path + "/camera-intrinsics.color.txt";
   Eigen::MatrixXf cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
   std::cout << "cam_K" << std::endl << cam_K << std::endl << std::endl;
 
@@ -91,6 +91,8 @@ main(int argc, const char** argv)
         Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);
         if (!std::isnan(d))
         {
+          direction_(0) *= d;
+          direction_(1) *= d;
           direction_(2) = d;
         }
         direction_ = cam_pose * direction_;

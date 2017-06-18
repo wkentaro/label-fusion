@@ -11,7 +11,11 @@ Eigen::MatrixXf
 loadMatrixFromFile(std::string filename, int M, int N)
 {
   Eigen::MatrixXf matrix(M, N);
-  FILE *fp = fopen(filename.c_str(), "r");
+  FILE* fp;
+  if ((fp = fopen(filename.c_str(), "r")) == 0)
+  {
+    throw std::invalid_argument("File does not exist.");
+  }
   for (int j = 0; j < M; j++)
   {
     for (int i = 0; i < N; i++)
