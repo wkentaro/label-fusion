@@ -9,7 +9,27 @@ import subprocess
 here = osp.dirname(osp.abspath(__file__))
 
 
-def demo(name):
+def demo_fusion(name, use_depth):
+    input_type = name.split('_')[0]
+
+    exe = osp.join(here, 'build/%s' % name)
+    data_path = osp.join(here, 'data/%ss' % input_type)
+    if use_depth:
+        cmd = '%s --depth %s' % (exe, data_path)
+    else:
+        cmd = '%s %s' % (exe, data_path)
+    subprocess.call(cmd, shell=True)
+
+    out_file = osp.join(here, '%s.ply' % name)
+    if distutils.spawn.find_executable('meshlab'):
+        cmd = 'meshlab %s' % out_file
+        subprocess.call(cmd, shell=True)
+    else:
+        print('Please install meshlab to view mesh file %s' % out_file)
+        print('  sudo apt-get install meshlab')
+
+
+def demo_view(name):
     input_type = name.split('_')[0]
 
     cmd = '%s %s' % (osp.join(here, 'build/%s' % name),
@@ -29,8 +49,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('name', choices=['mask_view', 'mask_fusion',
                                          'label_view', 'label_fusion'])
+    parser.add_argument('-d', '--depth', action='store_true')
     args = parser.parse_args()
-    demo(name=args.name)
+    if args.name.endswith('_fusion'):
+        demo_fusion(name=args.name, use_depth=args.depth)
+    elif args.name.endswith('_view'):
+        if args.depth:
+            print('--depth is not supported for demo: %s' % args.name)
+            return
+        demo_view(name=args.name)
+    else:
+        print('Unsupported demo: %s' % args.name)
 
 
 if __name__ == '__main__':

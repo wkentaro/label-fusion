@@ -30,6 +30,7 @@ cd label-fusion
 ```bash
 ./demo.py label_view  # see inputs
 ./demo.py label_fusion
+./demo.py label_fusion --depth  # use depth
 ```
 
 
@@ -42,6 +43,7 @@ We also support fusing multiple masks:
 ```bash
 ./demo.py mask_view  # see inputs
 ./demo.py mask_fusion
+./demo.py mask_fusion --depth  # use depth
 ```
 
 
