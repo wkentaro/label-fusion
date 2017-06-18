@@ -2,7 +2,10 @@
 
 <img src="static/label_fusion.png" width="80%" />
 
-C++ code to fuse multiple object mask images into OctoMap, which can be then used for 3d reconstruction of objects.
+C++ code to fuse multiple object labels or mask  into OctoMap,
+which can be then used for 3d reconstruction of objects.
+It works with and without depth inputs, so can be applied for depth insensible objects:
+texture-less (for stereo), black (for ir), and transparent.
 
 
 ## Requirements
