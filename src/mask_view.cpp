@@ -102,7 +102,7 @@ main(int argc, const char** argv)
     }
   }
 
-  std::string out_file("points.ply");
+  std::string out_file("mask_view.ply");
   pcl::io::savePLYFile(out_file, cloud);
   std::cout << "Wrote point cloud result to: " << out_file << std::endl;
 }

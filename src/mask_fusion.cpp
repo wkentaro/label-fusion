@@ -158,7 +158,7 @@ main(int argc, const char** argv)
     pt.z = (*it).z();
     cloud.push_back(pt);
   }
-  std::string out_file("out_mask_fusion.ply");
+  std::string out_file("mask_fusion.ply");
   pcl::io::savePLYFile(out_file, cloud);
   std::cout << "Wrote mask fusion result to: " << out_file << std::endl;
 }

@@ -9,12 +9,14 @@ import subprocess
 here = osp.dirname(osp.abspath(__file__))
 
 
-def demo(input):
-    cmd = '%s %s' % (osp.join(here, 'build/%s_fusion' % input),
-                     osp.join(here, 'data/%ss' % input))
+def demo(name):
+    input_type = name.split('_')[0]
+
+    cmd = '%s %s' % (osp.join(here, 'build/%s' % name),
+                     osp.join(here, 'data/%ss' % input_type))
     subprocess.call(cmd, shell=True)
 
-    out_file = osp.join(here, 'out_%s_fusion.ply' % input)
+    out_file = osp.join(here, '%s.ply' % name)
     if distutils.spawn.find_executable('meshlab'):
         cmd = 'meshlab %s' % out_file
         subprocess.call(cmd, shell=True)
@@ -25,9 +27,10 @@ def demo(input):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', choices=['mask', 'label'])
+    parser.add_argument('name', choices=['mask_view', 'mask_fusion',
+                                         'label_view', 'label_fusion'])
     args = parser.parse_args()
-    demo(input=args.input)
+    demo(name=args.name)
 
 
 if __name__ == '__main__':

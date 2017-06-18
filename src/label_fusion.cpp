@@ -177,7 +177,7 @@ main(int argc, const char** argv)
     index += 1;
   }
   assert(index == node_labels.size());
-  std::string out_file("out_label_fusion.ply");
+  std::string out_file("label_fusion.ply");
   pcl::io::savePLYFile(out_file, cloud);
   std::cout << "Wrote mask fusion result to: " << out_file << std::endl;
 }
