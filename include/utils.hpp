@@ -51,7 +51,8 @@ get_label_color(unsigned int label_id, unsigned int n_label)
   return cv::Scalar(red, green, blue);
 }
 
-cv::Mat loadSegmFile(std::string filename)
+cv::Mat
+loadSegmFile(std::string filename)
 {
   cv::Mat segm = cv::imread(filename, 0);
   if (segm.empty())
