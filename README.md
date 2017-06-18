@@ -13,15 +13,26 @@ C++ code to fuse multiple object mask images into OctoMap, which can be then use
 - [PCL](http://pointclouds.org) (tested with PCL 1.7.1)
 
 
-## Demo
+## Installation
 
 ```bash
+git clone https://github.com/wkentaro/label-fusion.git
+cd label-fusion
 ./build.sh
+```
+
+
+## Demo
+
+
+### Fusion of multiple labels
+
+```bash
 ./demo.py label_fusion
 ```
 
 
-## mask-fusion
+### Fusion of multiple masks
 
 We also support fusing multiple masks:
 
