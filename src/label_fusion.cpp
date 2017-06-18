@@ -20,7 +20,7 @@ main(int argc, const char** argv)
     printf("Usage: %s DATA_PATH\n", argv[0]);
     return 1;
   }
-  bool use_depth = false;
+  bool use_depth = true;
   std::string data_path(argv[1]);
 
   int n_views = 15;
