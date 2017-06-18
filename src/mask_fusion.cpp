@@ -27,6 +27,7 @@ main(int argc, const char** argv)
   int n_views = 15;
   double resolution = 0.01;
   double threshold = 0.95;
+  unsigned int ksize = 10;
 
   octomap::CountingOcTree octree(/*resolution=*/resolution);
 
@@ -75,9 +76,9 @@ main(int argc, const char** argv)
 
     octomap::KeySet occupied_cells;
     octomap::KeySet unoccupied_cells;
-    for (int v = 0; v < mask.rows; v+=10)
+    for (int v = 0; v < mask.rows; v += ksize)
     {
-      for (int u = 0; u < mask.cols; u+=10)
+      for (int u = 0; u < mask.cols; u += ksize)
       {
         float d = std::numeric_limits<float>::quiet_NaN();
         if (use_depth)

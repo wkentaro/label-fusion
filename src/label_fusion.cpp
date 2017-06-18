@@ -25,8 +25,9 @@ main(int argc, const char** argv)
 
   int n_views = 15;
   double resolution = 0.01;
-  double threshold = 0.95;
+  double threshold = 0.8;
   unsigned int n_label = 40;
+  unsigned int ksize = 10;
 
   octomap::LabelCountingOcTree octree(/*resolution=*/resolution, /*n_label=*/n_label);
 
@@ -79,9 +80,9 @@ main(int argc, const char** argv)
     std::map<unsigned int, octomap::KeySet> occupied_cells;
     octomap::KeySet occupied_cells_all;
     octomap::KeySet unoccupied_cells;
-    for (int v = 0; v < segm.rows; v+=10)
+    for (int v = 0; v < segm.rows; v += ksize)
     {
-      for (int u = 0; u < segm.cols; u+=10)
+      for (int u = 0; u < segm.cols; u += ksize)
       {
         float d = std::numeric_limits<float>::quiet_NaN();
         if (use_depth)
@@ -160,7 +161,7 @@ main(int argc, const char** argv)
   // visualize 3d segmentation
   octomap::point3d_list node_centers;
   std::vector<unsigned int> node_labels;
-  octree.getCentersMinHits(node_centers, node_labels, static_cast<int>(0.8 * n_views));
+  octree.getCentersMinHits(node_centers, node_labels, static_cast<int>(threshold * n_views));
   unsigned int index = 0;
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
