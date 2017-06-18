@@ -13,16 +13,32 @@
 
 #include "utils.hpp"
 
+void
+usage(const char** argv)
+{
+  printf("Usage: %s [--depth] DATA_PATH\n", argv[0]);
+}
+
 int
 main(int argc, const char** argv)
 {
-  if (argc != 2)
+  bool use_depth;
+  std::string data_path;
+  if (argc == 3 && (std::string(argv[1]) == "--depth"))
   {
-    printf("Usage: %s DATA_PATH\n", argv[0]);
+    use_depth = true;
+    data_path = std::string(argv[2]);
+  }
+  else if (argc == 2)
+  {
+    use_depth = false;
+    data_path = std::string(argv[1]);
+  }
+  else
+  {
+    usage(argv);
     return 1;
   }
-  bool use_depth = true;
-  std::string data_path(argv[1]);
 
   int n_views = 15;
   double resolution = 0.01;
