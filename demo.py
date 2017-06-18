@@ -9,6 +9,15 @@ import subprocess
 here = osp.dirname(osp.abspath(__file__))
 
 
+def open_mesh(mesh_file):
+    if distutils.spawn.find_executable('meshlab'):
+        cmd = 'meshlab %s' % mesh_file
+        subprocess.call(cmd, shell=True)
+    else:
+        print('Please install meshlab to view mesh file %s' % mesh_file)
+        print('  sudo apt-get install meshlab')
+
+
 def demo_fusion(name, use_depth):
     input_type = name.split('_')[0]
 
@@ -21,12 +30,7 @@ def demo_fusion(name, use_depth):
     subprocess.call(cmd, shell=True)
 
     out_file = osp.join(here, '%s.ply' % name)
-    if distutils.spawn.find_executable('meshlab'):
-        cmd = 'meshlab %s' % out_file
-        subprocess.call(cmd, shell=True)
-    else:
-        print('Please install meshlab to view mesh file %s' % out_file)
-        print('  sudo apt-get install meshlab')
+    open_mesh(out_file)
 
 
 def demo_view(name):
@@ -37,12 +41,7 @@ def demo_view(name):
     subprocess.call(cmd, shell=True)
 
     out_file = osp.join(here, '%s.ply' % name)
-    if distutils.spawn.find_executable('meshlab'):
-        cmd = 'meshlab %s' % out_file
-        subprocess.call(cmd, shell=True)
-    else:
-        print('Please install meshlab to view mesh file %s' % out_file)
-        print('  sudo apt-get install meshlab')
+    open_mesh(out_file)
 
 
 def main():
