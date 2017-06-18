@@ -79,6 +79,7 @@ main(int argc, const char** argv)
     cloud.push_back(pt);
 
     std::map<unsigned int, octomap::KeySet> occupied_cells;
+    octomap::KeySet occupied_cells_all;
     octomap::KeySet unoccupied_cells;
     for (int v = 0; v < segm.rows; v+=10)
     {
@@ -127,24 +128,33 @@ main(int argc, const char** argv)
         }
         else
         {
-          // TODO(wkentaro): raycasting
+          octomap::KeyRay key_ray;
+          octree.computeRayKeys(pt_origin, pt_direction, key_ray);
+          unoccupied_cells.insert(key_ray.begin(), key_ray.end());
+
+          octomap::OcTreeKey key;
+          if (octree.coordToKeyChecked(pt_direction, key))
+          {
+            occupied_cells_all.insert(key);
+            occupied_cells[label_id].insert(key);
+          }
         }
       }
     }
     for (octomap::KeySet::iterator it = unoccupied_cells.begin(), end = unoccupied_cells.end();
          it != end; ++it)
     {
-      octree.updateNode(*it, /*label=*/-1, /*hit=*/false, /*reset=*/true);
+      if (occupied_cells_all.find(*it) == occupied_cells_all.end())
+      {
+        octree.updateNode(*it, /*label=*/-1, /*hit=*/false, /*reset=*/true);
+      }
     }
     for (unsigned int label_id = 1; label_id < 40; label_id++)
     {
       for (octomap::KeySet::iterator it = occupied_cells[label_id].begin(), end = occupied_cells[label_id].end();
            it != end; ++it)
       {
-        if (unoccupied_cells.find(*it) == unoccupied_cells.end())
-        {
-          octree.updateNode(*it, /*label=*/label_id);
-        }
+        octree.updateNode(*it, /*label=*/label_id);
       }
     }
   }
