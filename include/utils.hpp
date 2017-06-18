@@ -7,9 +7,8 @@
 namespace utils
 {
 
-// Load an M x N matrix from a text file (numbers delimited by spaces/tabs)
-// Return the matrix as a float vector of the matrix in row-major order
-Eigen::MatrixXf loadMatrixFromFile(std::string filename, int M, int N)
+Eigen::MatrixXf
+loadMatrixFromFile(std::string filename, int M, int N)
 {
   Eigen::MatrixXf matrix(M, N);
   FILE *fp = fopen(filename.c_str(), "r");
@@ -26,7 +25,8 @@ Eigen::MatrixXf loadMatrixFromFile(std::string filename, int M, int N)
   return matrix;
 }
 
-float get_color(int c, int x, int max)
+float
+get_color(int c, int x, int max)
 {
   float colors[6][3] = { {1,0,1}, {0,0,1}, {0,1,1}, {0,1,0}, {1,1,0}, {1,0,0} };
   float ratio = ((float)x/max)*5;
@@ -37,7 +37,8 @@ float get_color(int c, int x, int max)
   return r;
 }
 
-cv::Scalar get_label_color(unsigned int label_id, unsigned int n_label)
+cv::Scalar
+get_label_color(unsigned int label_id, unsigned int n_label)
 {
   unsigned int offset = label_id * 123457 % n_label;
   float red = get_color(2, offset, n_label);
@@ -65,7 +66,8 @@ cv::Mat loadSegmFile(std::string filename)
   return segm;
 }
 
-cv::Mat loadDepthFile(std::string filename)
+cv::Mat
+loadDepthFile(std::string filename)
 {
   cv::Mat depth_raw = cv::imread(filename, CV_LOAD_IMAGE_UNCHANGED);
   if (depth_raw.empty())
@@ -78,8 +80,7 @@ cv::Mat loadDepthFile(std::string filename)
   {
     for (size_t i = 0; i < depth_raw.cols; ++i)
     {
-      float tmp;
-      tmp = static_cast<float>(depth_raw.at<unsigned short>(j, i) >> 3) / 1e4;
+      float tmp = static_cast<float>(depth_raw.at<unsigned short>(j, i) >> 3) / 1e4;
       if (tmp == 0)
       {
         depth.at<float>(j, i) = std::numeric_limits<float>::quiet_NaN();
@@ -93,7 +94,8 @@ cv::Mat loadDepthFile(std::string filename)
   return depth;
 }
 
-cv::Mat colorizeDepth(cv::Mat depth)
+cv::Mat
+colorizeDepth(cv::Mat depth)
 {
     double min_value, max_value;
     cv::minMaxLoc(depth, &min_value, &max_value);
@@ -114,7 +116,8 @@ cv::Mat colorizeDepth(cv::Mat depth)
     return depth_viz;
 }
 
-cv::Mat colorizeLabel(cv::Mat label, unsigned int n_label)
+cv::Mat
+colorizeLabel(cv::Mat label, unsigned int n_label)
 {
   cv::Mat label_viz = cv::Mat::zeros(label.rows, label.cols, CV_8UC3);
   for (size_t j = 0; j < label.rows; j++)
