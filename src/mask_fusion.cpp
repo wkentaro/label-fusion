@@ -25,23 +25,22 @@ main(int argc, const char** argv)
   std::string data_path(argv[1]);
 
   int n_views = 15;
+  double resolution = 0.01;
+  double threshold = 0.95;
 
-  octomap::CountingOcTree octree(/*resolution=*/0.01);
+  octomap::CountingOcTree octree(/*resolution=*/resolution);
 
   // cam_info: intrinsic parameter of color camera
   std::string cam_K_file = data_path + "/camera-intrinsics.txt";
   Eigen::MatrixXf cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
-  std::cout << "cam_K" << std::endl;
-  std::cout << cam_K << std::endl;
-  std::cout << std::endl;
+  std::cout << "cam_K" << std::endl << cam_K << std::endl << std::endl;
 
   pcl::PointCloud<pcl::PointXYZRGB> cloud;
   for (int frame_idx = 0; frame_idx < n_views; frame_idx++)
   {
     std::ostringstream curr_frame_prefix;
     curr_frame_prefix << std::setw(6) << std::setfill('0') << frame_idx;
-    std::cout << "frame-" + curr_frame_prefix.str() << std::endl;
-    std::cout << std::endl;
+    std::cout << "frame-" + curr_frame_prefix.str() << std::endl << std::endl;
 
     // mask file
     std::string mask_file = data_path + "/frame-" + curr_frame_prefix.str() + ".mask.png";
@@ -60,9 +59,7 @@ main(int argc, const char** argv)
     // pose: world -> camera
     std::string pose_file = data_path + "/frame-" + curr_frame_prefix.str() + ".pose.txt";
     Eigen::MatrixXf cam_pose = utils::loadMatrixFromFile(pose_file, 4, 4);
-    std::cout << "cam_pose" << std::endl;
-    std::cout << cam_pose << std::endl;
-    std::cout << std::endl;
+    std::cout << "cam_pose" << std::endl << cam_pose << std::endl << std::endl;
 
     // camera origin
     Eigen::Vector4f origin_(0, 0, 0, 1);
@@ -149,7 +146,7 @@ main(int argc, const char** argv)
 
   // visualize 3d segmentation
   octomap::point3d_list node_centers;
-  octree.getCentersMinHits(node_centers, static_cast<int>(0.95 * n_views));
+  octree.getCentersMinHits(node_centers, static_cast<int>(threshold * n_views));
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
     pcl::PointXYZRGB pt(0, 255, 0);

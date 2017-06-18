@@ -24,28 +24,28 @@ main(int argc, const char** argv)
   std::string data_path(argv[1]);
 
   int n_views = 15;
+  double resolution = 0.01;
+  double threshold = 0.95;
+  unsigned int n_label = 40;
 
-  octomap::LabelCountingOcTree octree(/*resolution=*/0.01, /*n_label=*/40);
+  octomap::LabelCountingOcTree octree(/*resolution=*/resolution, /*n_label=*/n_label);
 
   // cam_info: intrinsic parameter of color camera
   std::string cam_K_file = data_path + "/camera-intrinsics.txt";
   Eigen::MatrixXf cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
-  std::cout << "cam_K" << std::endl;
-  std::cout << cam_K << std::endl;
-  std::cout << std::endl;
+  std::cout << "cam_K" << std::endl << cam_K << std::endl << std::endl;
 
   pcl::PointCloud<pcl::PointXYZRGB> cloud;
   for (int frame_idx = 0; frame_idx < n_views; frame_idx++)
   {
     std::ostringstream curr_frame_prefix;
     curr_frame_prefix << std::setw(6) << std::setfill('0') << frame_idx;
-    std::cout << "frame-" + curr_frame_prefix.str() << std::endl;
-    std::cout << std::endl;
+    std::cout << "frame-" + curr_frame_prefix.str() << std::endl << std::endl;
 
     // segmentation file
     std::string segm_file = data_path + "/frame-" + curr_frame_prefix.str() + ".segm.png";
     cv::Mat segm = utils::loadSegmFile(segm_file);
-    // cv::Mat segm_viz = utils::colorizeLabel(segm, #<{(|n_label=|)}>#40);
+    // cv::Mat segm_viz = utils::colorizeLabel(segm, #<{(|n_label=|)}>#n_label);
     // cv::imshow("segm_viz", segm_viz);
     // cv::waitKey(0);
 
@@ -62,9 +62,7 @@ main(int argc, const char** argv)
     // pose: world -> camera
     std::string pose_file = data_path + "/frame-" + curr_frame_prefix.str() + ".pose.txt";
     Eigen::MatrixXf cam_pose = utils::loadMatrixFromFile(pose_file, 4, 4);
-    std::cout << "cam_pose" << std::endl;
-    std::cout << cam_pose << std::endl;
-    std::cout << std::endl;
+    std::cout << "cam_pose" << std::endl << cam_pose << std::endl << std::endl;
 
     // camera origin
     Eigen::Vector4f origin_(0, 0, 0, 1);
@@ -149,7 +147,7 @@ main(int argc, const char** argv)
         octree.updateNode(*it, /*label=*/-1, /*hit=*/false, /*reset=*/true);
       }
     }
-    for (unsigned int label_id = 1; label_id < 40; label_id++)
+    for (unsigned int label_id = 1; label_id < n_label; label_id++)
     {
       for (octomap::KeySet::iterator it = occupied_cells[label_id].begin(), end = occupied_cells[label_id].end();
            it != end; ++it)
@@ -167,7 +165,7 @@ main(int argc, const char** argv)
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
     unsigned int label_id = node_labels[index];
-    cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/40);
+    cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/n_label);
     pcl::PointXYZRGB pt(color[0] * 255, color[1] * 255, color[2] * 255);
     pt.x = (*it).x();
     pt.y = (*it).y();
