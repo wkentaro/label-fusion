@@ -162,7 +162,7 @@ main(int argc, const char** argv)
   // visualize 3d segmentation
   octomap::point3d_list node_centers;
   std::vector<unsigned int> node_labels;
-  octree.getCentersMinHits(node_centers, node_labels, static_cast<int>(0.95 * n_views));
+  octree.getCentersMinHits(node_centers, node_labels, static_cast<int>(0.8 * n_views));
   unsigned int index = 0;
   for (octomap::point3d_list::iterator it = node_centers.begin(), end = node_centers.end(); it != end; ++it)
   {
