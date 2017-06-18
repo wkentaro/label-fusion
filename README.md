@@ -28,7 +28,7 @@ cd label-fusion
 ### Fusion of multiple labels
 
 ```bash
-./demo.py label_fusion
+./demo.py label
 ```
 
 
@@ -39,7 +39,7 @@ We also support fusing multiple masks:
 <img src="static/mask_fusion.png" width="80%" />
 
 ```bash
-./demo.py mask_fusion
+./demo.py mask
 ```
 
 
