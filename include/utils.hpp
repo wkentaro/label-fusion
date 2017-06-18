@@ -122,7 +122,7 @@ cv::Mat colorizeLabel(cv::Mat label, unsigned int n_label)
     for (size_t i = 0; i < label.cols; i++)
     {
       unsigned int label_id = static_cast<unsigned int>(label.at<unsigned char>(j, i));
-      assert(0 <= label_id < 40);
+      assert(0 <= label_id && label_id < n_label);
       if (label_id != 0) {
         cv::Scalar color = utils::get_label_color(label_id, /*n_label=*/n_label);
         label_viz.at<cv::Vec3b>(j, i) = cv::Vec3b(color[2] * 255, color[1] * 255, color[0] * 255);

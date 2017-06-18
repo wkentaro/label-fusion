@@ -8,7 +8,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(octomap REQUIRED)
 include_directories(${OCTOMAP_INCLUDE_DIRS})
 
-find_package(PCL REQUIRED)
+find_package(PCL REQUIRED COMPONENTS io)
 include_directories(${PCL_INCLUDE_DIRS})
 
 include_directories(/usr/include/eigen3)
