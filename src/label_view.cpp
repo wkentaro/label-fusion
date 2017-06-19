@@ -28,7 +28,7 @@ main(int argc, const char** argv)
 
   // cam_info: intrinsic parameter of color camera
   std::string cam_K_file = data_path + "/camera-intrinsics.color.txt";
-  Eigen::MatrixXf cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
+  Eigen::Matrix3f cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
   std::cout << "cam_K" << std::endl << cam_K << std::endl << std::endl;
 
   pcl::PointCloud<pcl::PointXYZRGB> cloud;
@@ -62,7 +62,7 @@ main(int argc, const char** argv)
 
     // pose: world -> camera
     std::string pose_file = data_path + "/frame-" + curr_frame_prefix.str() + ".pose.txt";
-    Eigen::MatrixXf cam_pose = utils::loadMatrixFromFile(pose_file, 4, 4);
+    Eigen::Matrix4f cam_pose = utils::loadMatrixFromFile(pose_file, 4, 4);
     std::cout << "cam_pose" << std::endl << cam_pose << std::endl << std::endl;
 
     // camera origin
