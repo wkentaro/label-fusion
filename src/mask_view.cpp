@@ -7,7 +7,7 @@
 
 #include <octomap/CountingOcTree.h>
 #include <opencv2/opencv.hpp>
-#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -105,11 +105,11 @@ main(int argc, const char** argv)
   }
 
   std::string out_file;
-  out_file = "mask_view.color.ply";
-  pcl::io::savePLYFile(out_file, cloud_color);
+  out_file = "mask_view.color.pcd";
+  pcl::io::savePCDFile(out_file, cloud_color);
   std::cout << "Wrote point cloud result to: " << out_file << std::endl;
 
-  out_file = "mask_view.mask.ply";
-  pcl::io::savePLYFile(out_file, cloud_mask);
+  out_file = "mask_view.mask.pcd";
+  pcl::io::savePCDFile(out_file, cloud_mask);
   std::cout << "Wrote point cloud result to: " << out_file << std::endl;
 }

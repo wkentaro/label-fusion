@@ -7,7 +7,7 @@
 
 #include <octomap/CountingOcTree.h>
 #include <opencv2/opencv.hpp>
-#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -174,7 +174,7 @@ main(int argc, const char** argv)
     pt.z = (*it).z();
     cloud.push_back(pt);
   }
-  std::string out_file("mask_fusion.ply");
-  pcl::io::savePLYFile(out_file, cloud);
+  std::string out_file("mask_fusion.pcd");
+  pcl::io::savePCDFile(out_file, cloud);
   std::cout << "Wrote mask fusion result to: " << out_file << std::endl;
 }

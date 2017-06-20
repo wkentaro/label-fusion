@@ -6,7 +6,7 @@
 
 #include <octomap/LabelCountingOcTree.h>
 #include <opencv2/opencv.hpp>
-#include <pcl/io/ply_io.h>
+#include <pcl/io/pcd_io.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -193,7 +193,7 @@ main(int argc, const char** argv)
     index += 1;
   }
   assert(index == node_labels.size());
-  std::string out_file("label_fusion.ply");
-  pcl::io::savePLYFile(out_file, cloud);
+  std::string out_file("label_fusion.pcd");
+  pcl::io::savePCDFile(out_file, cloud);
   std::cout << "Wrote mask fusion result to: " << out_file << std::endl;
 }
