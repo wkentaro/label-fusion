@@ -157,4 +157,12 @@ depthToPoint(Eigen::Matrix4f cam_pose, Eigen::Matrix3f cam_K, float u, float v, 
   return point;
 }
 
+void
+splitext(std::string filename, std::string& basename, std::string& ext)
+{
+  size_t ext_index = filename.find_last_of(".");
+  basename = filename.substr(0, ext_index);
+  ext = filename.substr(ext_index, basename.size());
+}
+
 }  // namespace utils
