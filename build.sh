@@ -11,7 +11,13 @@ export CMAKE_PREFIX_PATH=${THIS_DIR}/devel
 mkdir -p ${THIS_DIR}/octomap/octomap/build
 cd ${THIS_DIR}/octomap/octomap/build
 cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH
-make install -j
+make install -j2
+cd ${THIS_DIR}
+
+mkdir -p ${THIS_DIR}/pcl/build
+cd ${THIS_DIR}/pcl/build
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH
+make install -j2
 cd ${THIS_DIR}
 
 mkdir -p build
