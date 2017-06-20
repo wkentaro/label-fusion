@@ -31,3 +31,6 @@ target_link_libraries(marching_cubes ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${
 
 add_executable(bilateral_filter src/bilateral_filter.cpp)
 target_link_libraries(bilateral_filter ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(organized_point_cloud src/organized_point_cloud.cpp)
+target_link_libraries(organized_point_cloud ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
