@@ -8,7 +8,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(octomap REQUIRED)
 include_directories(${OCTOMAP_INCLUDE_DIRS})
 
-find_package(PCL REQUIRED COMPONENTS io)
+find_package(PCL REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 
 include_directories(/usr/include/eigen3)
@@ -25,3 +25,9 @@ target_link_libraries(label_view ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(label_fusion src/label_fusion.cpp)
 target_link_libraries(label_fusion ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(marching_cubes src/marching_cubes.cpp)
+target_link_libraries(marching_cubes ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(bilateral_filter src/bilateral_filter.cpp)
+target_link_libraries(bilateral_filter ${OpenCV_LIBRARIES} ${OCTOMAP_LIBRARIES} ${PCL_LIBRARIES})
