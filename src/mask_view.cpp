@@ -30,7 +30,8 @@ main(int argc, const char** argv)
   Eigen::Matrix3f cam_K = utils::loadMatrixFromFile(cam_K_file, 3, 3);
   std::cout << "cam_K" << std::endl << cam_K << std::endl << std::endl;
 
-  pcl::PointCloud<pcl::PointXYZRGB> cloud;
+  pcl::PointCloud<pcl::PointXYZRGB> cloud_color;
+  pcl::PointCloud<pcl::PointXYZRGB> cloud_mask;
   for (int frame_idx = 0; frame_idx < n_views; frame_idx++)
   {
     std::ostringstream curr_frame_prefix;
@@ -65,17 +66,18 @@ main(int argc, const char** argv)
     Eigen::Matrix4f cam_pose = utils::loadMatrixFromFile(pose_file, 4, 4);
     std::cout << "cam_pose" << std::endl << cam_pose << std::endl << std::endl;
 
-    // camera origin
-    Eigen::Vector4f origin_(0, 0, 0, 1);
-    origin_ = cam_pose * origin_;
-    Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
-
     // visualize camera origin
-    pcl::PointXYZRGB pt(255, 0, 0);
-    pt.x = origin(0);
-    pt.y = origin(1);
-    pt.z = origin(2);
-    cloud.push_back(pt);
+    {
+      Eigen::Vector4f origin_(0, 0, 0, 1);
+      origin_ = cam_pose * origin_;
+      Eigen::Vector3f origin(origin_(0), origin_(1), origin_(2));
+      pcl::PointXYZRGB pt(255, 0, 0);
+      pt.x = origin(0);
+      pt.y = origin(1);
+      pt.z = origin(2);
+      cloud_color.push_back(pt);
+      cloud_mask.push_back(pt);
+    }
 
     for (size_t v = 0; v < depth.rows; v++)
     {
@@ -87,22 +89,27 @@ main(int argc, const char** argv)
           continue;
         }
 
-        Eigen::Vector3f uv(u, v, 1);
-        uv = cam_K.inverse() * uv;
-        Eigen::Vector4f pt3d_(uv(0) * d, uv(1) * d, d, 1);
-        pt3d_ = cam_pose * pt3d_;
-
         cv::Vec3b color = img.at<cv::Vec3b>(v, u);
-        pcl::PointXYZRGB pt(color[2], color[1], color[0]);
-        pt.x = pt3d_(0);
-        pt.y = pt3d_(1);
-        pt.z = pt3d_(2);
-        cloud.push_back(pt);
+        pcl::PointXYZRGB pt_color = utils::depthToPoint(
+          cam_pose, cam_K, u, v, d, color[2], color[1], color[0]);
+        cloud_color.push_back(pt_color);
+
+        uint8_t m = mask.at<uint8_t>(v, u);
+        pcl::PointXYZRGB pt_mask(m, m, m);
+        pt_mask.x = pt_color.x;
+        pt_mask.y = pt_color.y;
+        pt_mask.z = pt_color.z;
+        cloud_mask.push_back(pt_mask);
       }
     }
   }
 
-  std::string out_file("mask_view.ply");
-  pcl::io::savePLYFile(out_file, cloud);
+  std::string out_file;
+  out_file = "mask_view.color.ply";
+  pcl::io::savePLYFile(out_file, cloud_color);
+  std::cout << "Wrote point cloud result to: " << out_file << std::endl;
+
+  out_file = "mask_view.mask.ply";
+  pcl::io::savePLYFile(out_file, cloud_mask);
   std::cout << "Wrote point cloud result to: " << out_file << std::endl;
 }

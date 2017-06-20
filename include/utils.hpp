@@ -3,6 +3,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <opencv2/opencv.hpp>
+#include <pcl/point_types.h>
 
 namespace utils
 {
@@ -138,6 +139,22 @@ colorizeLabel(cv::Mat label, unsigned int n_label)
     }
   }
   return label_viz;
+}
+
+pcl::PointXYZRGB
+depthToPoint(Eigen::Matrix4f cam_pose, Eigen::Matrix3f cam_K, float u, float v, float d,
+             unsigned char r, unsigned char g, unsigned char b)
+{
+  Eigen::Vector3f uv(u, v, 1);
+  uv = cam_K.inverse() * uv;
+  Eigen::Vector4f pt3d_(uv(0) * d, uv(1) * d, d, 1);
+  pt3d_ = cam_pose * pt3d_;
+
+  pcl::PointXYZRGB point(r, g, b);
+  point.x = pt3d_(0);
+  point.y = pt3d_(1);
+  point.z = pt3d_(2);
+  return point;
 }
 
 }  // namespace utils
