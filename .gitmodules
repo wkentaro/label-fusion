@@ -2,3 +2,7 @@
 	path = octomap
 	url = https://github.com/wkentaro/octomap.git
 	branch = label_fusion
+[submodule "pcl"]
+	path = pcl
+	url = https://github.com/PointCloudLibrary/pcl.git
+	version = master
