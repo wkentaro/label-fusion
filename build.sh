@@ -12,7 +12,7 @@ for ext in octomap/octomap cpu_tsdf pcl; do
   mkdir -p ${THIS_DIR}/${ext}/build
   cd ${THIS_DIR}/${ext}/build
   cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH
-  make install -j2
+  make install -j
   cd ${THIS_DIR}
 done
 
