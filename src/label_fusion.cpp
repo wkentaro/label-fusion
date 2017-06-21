@@ -109,7 +109,8 @@ main(int argc, const char** argv)
 
         Eigen::Vector3f uv(u, v, 1);
         uv = cam_K.inverse() * uv;
-        Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);
+        Eigen::Vector4f direction_(uv(0), uv(1), uv(2), 1);  // with depth
+        Eigen::Vector4f direction_far_(direction_(0), direction_(1), direction_(2), 1);  // without depth
         if (!std::isnan(d))
         {
           direction_(0) *= d;
@@ -117,48 +118,36 @@ main(int argc, const char** argv)
           direction_(2) = d;
         }
         direction_ = cam_pose * direction_;
+        direction_far_ = cam_pose * direction_far_;
         Eigen::Vector3f direction(direction_(0), direction_(1), direction_(2));
+        Eigen::Vector3f direction_far(direction_far_(0), direction_far_(1), direction_far_(2));
+
+        // visualize ray direction
+        pcl::PointXYZRGB pt(0, 0, 255);
+        pt.x = direction_far(0);
+        pt.y = direction_far(1);
+        pt.z = direction_far(2);
+#pragma omp critical
+        cloud.push_back(pt);
 
         octomap::point3d pt_origin(origin(0), origin(1), origin(2));
         octomap::point3d pt_direction(direction(0), direction(1), direction(2));
+        octomap::point3d pt_direction_far(direction_far(0), direction_far(1), direction_far(2));
         unsigned int label_id = static_cast<unsigned int>(segm.at<unsigned char>(v, u));
-        if (std::isnan(d))
-        {
-          // visualize ray direction
-          pcl::PointXYZRGB pt(0, 0, 255);
-          pt.x = direction(0);
-          pt.y = direction(1);
-          pt.z = direction(2);
-#pragma omp critical
-          cloud.push_back(pt);
-
-          // cv::Mat ray_viz;
-          // segm_viz.copyTo(ray_viz);
-          // cv::circle(ray_viz, cv::Point(u, v), 20, cv::Scalar(0, 255, 0), -1);
-          // cv::imshow("ray_viz", ray_viz);
-          // cv::waitKey(1);
-
-          if (label_id != 0)
-          {
-            octomap::KeyRay key_ray;
-            octree.computeRayKeys(pt_origin, pt_direction, key_ray);
-#pragma omp critical
-            occupied_cells[label_id].insert(key_ray.begin(), key_ray.end());
-          }
-        }
-        else
+        if (label_id != 0)
         {
           octomap::KeyRay key_ray;
-          octree.computeRayKeys(pt_origin, pt_direction, key_ray);
+          octree.computeRayKeys(pt_origin, pt_direction_far, key_ray);
 #pragma omp critical
-          unoccupied_cells.insert(key_ray.begin(), key_ray.end());
-
-          octomap::OcTreeKey key;
-#pragma omp critical
-          if (octree.coordToKeyChecked(pt_direction, key))
+          occupied_cells[label_id].insert(key_ray.begin(), key_ray.end());
+        }
+        if (!std::isnan(d))
+        {
+          octomap::KeyRay key_ray;
+          if (octree.computeRayKeys(pt_origin, pt_direction, key_ray))
           {
-            occupied_cells_all.insert(key);
-            occupied_cells[label_id].insert(key);
+#pragma omp critical
+            unoccupied_cells.insert(key_ray.begin(), key_ray.end());
           }
         }
       }
