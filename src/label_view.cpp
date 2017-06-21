@@ -79,6 +79,7 @@ main(int argc, const char** argv)
       cloud_segm.push_back(pt);
     }
 
+#pragma omp parallel for
     for (size_t v = 0; v < depth.rows; v++)
     {
       for (size_t u = 0; u < depth.cols; u++)
@@ -92,6 +93,7 @@ main(int argc, const char** argv)
         cv::Vec3b color = img.at<cv::Vec3b>(v, u);
         pcl::PointXYZRGB pt_color = utils::depthToPoint(
           cam_pose, cam_K, u, v, d, color[2], color[1], color[0]);
+#pragma omp critical
         cloud_color.push_back(pt_color);
 
         cv::Vec3b color_label = segm_viz.at<cv::Vec3b>(v, u);
@@ -99,6 +101,7 @@ main(int argc, const char** argv)
         pt_segm.x = pt_color.x;
         pt_segm.y = pt_color.y;
         pt_segm.z = pt_color.z;
+#pragma omp critical
         cloud_segm.push_back(pt_segm);
       }
     }

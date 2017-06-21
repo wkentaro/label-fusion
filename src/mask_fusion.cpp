@@ -92,6 +92,7 @@ main(int argc, const char** argv)
 
     octomap::KeySet occupied_cells;
     octomap::KeySet unoccupied_cells;
+#pragma omp parallel for
     for (int v = 0; v < mask.rows; v += ksize)
     {
       for (int u = 0; u < mask.cols; u += ksize)
@@ -121,6 +122,7 @@ main(int argc, const char** argv)
           pt.x = direction(0);
           pt.y = direction(1);
           pt.z = direction(2);
+#pragma omp critical
           cloud.push_back(pt);
         }
 
@@ -132,6 +134,7 @@ main(int argc, const char** argv)
           {
             octomap::KeyRay key_ray;
             octree.computeRayKeys(pt_origin, pt_direction, key_ray);
+#pragma omp critical
             occupied_cells.insert(key_ray.begin(), key_ray.end());
           }
         }
@@ -140,11 +143,13 @@ main(int argc, const char** argv)
           octomap::KeyRay key_ray;
           if (octree.computeRayKeys(pt_origin, pt_direction, key_ray))
           {
+#pragma omp critical
             unoccupied_cells.insert(key_ray.begin(), key_ray.end());
           }
           octomap::OcTreeKey key;
           if (octree.coordToKeyChecked(pt_direction, key))
           {
+#pragma omp critical
             occupied_cells.insert(key);
           }
         }

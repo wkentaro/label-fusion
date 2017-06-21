@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
   cloud->points.resize(depth.rows * depth.cols);
   cloud->height = depth.rows;
   cloud->width = depth.cols;
+#pragma omp parallel for
   for (size_t v = 0; v < depth.rows; v++)
   {
     for (size_t u = 0; u < depth.cols; u++)
