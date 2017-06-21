@@ -8,7 +8,7 @@ git submodule update --init --recursive
 
 export CMAKE_PREFIX_PATH=${THIS_DIR}/devel
 
-for ext in octomap/octomap cpu_tsdf pcl; do
+for ext in octomap/octomap pcl; do
   mkdir -p ${THIS_DIR}/${ext}/build
   cd ${THIS_DIR}/${ext}/build
   cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH

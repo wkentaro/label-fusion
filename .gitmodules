@@ -6,7 +6,3 @@
 	path = pcl
 	url = https://github.com/PointCloudLibrary/pcl.git
 	version = master
-[submodule "cpu_tsdf"]
-	path = cpu_tsdf
-	url = https://github.com/sdmiller/cpu_tsdf.git
-	version = master
