@@ -1,4 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) 2017, Kentaro Wada, University of Tokyo
+// ----------------------------------------------------------------------------
+
 #include <iostream>
+#include <string>
+
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>

@@ -1,3 +1,9 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) 2017, Kentaro Wada, University of Tokyo
+// ----------------------------------------------------------------------------
+
+#include <string>
+
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/filters/fast_bilateral.h>

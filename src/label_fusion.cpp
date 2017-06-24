@@ -1,8 +1,15 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) 2017, Kentaro Wada, University of Tokyo
+// ----------------------------------------------------------------------------
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <map>
+#include <limits>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <octomap/LabelCountingOcTree.h>
 #include <opencv2/opencv.hpp>
