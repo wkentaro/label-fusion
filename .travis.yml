@@ -17,4 +17,4 @@ install:
 
 script:
   - cpplint src/*
-  - ./build.sh
+  - source build.sh -j2

@@ -12,13 +12,13 @@ for ext in octomap/octomap pcl; do
   mkdir -p ${THIS_DIR}/${ext}/build
   cd ${THIS_DIR}/${ext}/build
   cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$CMAKE_PREFIX_PATH
-  make install -j
+  make install $*
   cd ${THIS_DIR}
 done
 
 mkdir -p build
 cd build
 cmake ..
-make -j
+make $*
 
 set +x
