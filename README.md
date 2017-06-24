@@ -1,5 +1,7 @@
 # label-fusion: Volumetric Fusion of Multiple Semantic Labels
 
+[![Build Status](https://travis-ci.com/wkentaro/label-fusion.svg?token=zM5rExyvuRoJThsnqHAF&branch=master)](https://travis-ci.com/wkentaro/label-fusion)
+
 <img src="static/label_fusion.png" width="80%" />
 
 C++ code to fuse multiple object labels or mask  into OctoMap,
